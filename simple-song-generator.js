@@ -76,7 +76,7 @@ const getNumberOfChords = (prog) => {
       }
       return acc;
   }, []);
-  return uniqueItems;
+  return uniqueItems.length;
 };
 
 // const generateChord = (root, scale) => {
@@ -133,30 +133,35 @@ const disableUnselectedButtons = (isDisabled) => {
 
 const updateChordButtonState = (chord, value) => {
   const booleanValue = value === 0 ? false : true;
-  const numberOfChords = getNumberOfChords(pattern);
-  const freeSpaces = Object.values(chordButtonState).filter((item) => !item.selected).length;
-  if (freeSpaces > 0){
+  if (!chordButtonState[chord].disabled){
     chordButtonState[chord] = { ...chordButtonState[chord], selected: booleanValue }
-    if (freeSpaces === 1) {
-      disableUnselectedButtons(true);
-    } else if (freeSpaces > 1) {
-      disableUnselectedButtons(false);
-    }
   }
-  maxApi.post(chordButtonState[chord]);
+  const numberOfChords = getNumberOfChords(pattern);
+  const selectedItems = Object.values(chordButtonState).filter((item) => {
+    return item.selected;
+  }).length;
+  const freeSpaces = numberOfChords - selectedItems;
+  if (freeSpaces === 0) {
+    disableUnselectedButtons(true);
+  } else if (freeSpaces > 0) {
+    disableUnselectedButtons(false);
+  }
 }
 
 maxApi.addHandler('toggleI', (value) => {
   updateChordButtonState('I', value);
+  maxApi.post(chordButtonState);
   // maxApi.outlet(chordButtonState[value]);
 });
 
 maxApi.addHandler('toggleII', (value) => {
   updateChordButtonState('II', value);
+  maxApi.post(chordButtonState);
 });
 
 maxApi.addHandler('toggleIII', (value) => {
   updateChordButtonState('III', value);
+  maxApi.post(chordButtonState);
 });
 
 maxApi.addHandler('toggleIV', (value) => {
