@@ -19,47 +19,47 @@ const maxApi = require('max-api');
 
 let chordButtonState = {
   I: {
-    selected: false,
-    disabled: false
+    on: false,
+    active: true,
   },
   II: {
-    selected: false,
-    disabled: false
+    on: false,
+    active: true,
   },
   III: {
-    selected: false,
-    disabled: false
+    on: false,
+    active: true,
   },
   IV: {
-    selected: false,
-    disabled: false
+    on: false,
+    active: true,
   },
   V: {
-    selected: false,
-    disabled: false
+    on: false,
+    active: true,
   },
   VI: {
-    selected: false,
-    disabled: false
+    on: false,
+    active: true,
   },
   VII: {
-    selected: false,
-    disabled: false
+    on: false,
+    active: true,
   },
   VIII: {
-    selected: false,
-    disabled: false
+    on: false,
+    active: true,
   },
   I2: {
-    selected: false,
-    disabled: false
+    on: false,
+    active: true,
   }
 }
 
 // // let chordName;
 // // let chordType;
 
-let pattern = 'a/b/a/b';
+let pattern;
 // let chordProgression;
 
 // let key = {
@@ -70,12 +70,7 @@ let pattern = 'a/b/a/b';
 
 const getNumberOfChords = (prog) => {
   const progArr = prog.match(/[a-z]/g);
-  const uniqueItems = progArr.reduce((acc, item, i) => {
-      if (!acc.includes(item)) {
-        acc[i] = item;
-      }
-      return acc;
-  }, []);
+  const uniqueItems = progArr.filter((item, index) => progArr.indexOf(item) === index);
   return uniqueItems.length;
 };
 
@@ -97,10 +92,10 @@ const getNumberOfChords = (prog) => {
 
 // // });
 
-// // maxApi.addHandler('updatePattern', (pattern) => {
-// //   pattern = pattern;
-// //   numberOfChords = getNumberOfChords(pattern);
-// // });
+maxApi.addHandler('updatePattern', (updatedPatt) => {
+  pattern = updatedPatt;
+  clearChordButtonState();
+});
 
 // maxApi.addHandler('updateProgression', (button, value) => {
 //   // chordProgression = [a, b, c, d];
@@ -119,67 +114,77 @@ const getNumberOfChords = (prog) => {
 
 const clearChordButtonState = () => {
   Object.keys(chordButtonState).forEach((item) => {
-    chordButtonState[item] = { selected: false, disabled: false }
+    chordButtonState[item] = { on: false, active: true }
   });
 }
 
-const disableUnselectedButtons = (isDisabled) => {
+const activateUnonButtons = (isActive) => {
   Object.keys(chordButtonState).forEach((item) => {
-    if(!chordButtonState[item].selected) {
-      chordButtonState[item] = { ...chordButtonState[item], disabled: isDisabled }
+    if(!chordButtonState[item].on) {
+      chordButtonState[item] = { ...chordButtonState[item], active: isActive }
     }
   });
 }
 
 const updateChordButtonState = (chord, value) => {
   const booleanValue = value === 0 ? false : true;
-  if (!chordButtonState[chord].disabled){
-    chordButtonState[chord] = { ...chordButtonState[chord], selected: booleanValue }
+  if (chordButtonState[chord].active){
+    chordButtonState[chord] = { ...chordButtonState[chord], on: booleanValue }
   }
-  const numberOfChords = getNumberOfChords(pattern);
-  const selectedItems = Object.values(chordButtonState).filter((item) => {
-    return item.selected;
+  const numberOfChords = pattern ? getNumberOfChords(pattern) : 0;
+  const onItems = Object.values(chordButtonState).filter((item) => {
+    return item.on;
   }).length;
-  const freeSpaces = numberOfChords - selectedItems;
+  const freeSpaces = numberOfChords - onItems;
   if (freeSpaces === 0) {
-    disableUnselectedButtons(true);
+    activateUnonButtons(false);
   } else if (freeSpaces > 0) {
-    disableUnselectedButtons(false);
+    activateUnonButtons(true);
   }
 }
 
+const updateChord = (toggleName, value) => {
+  updateChordButtonState(toggleName, value);
+  const state = chordButtonState[toggleName];
+  maxApi.outlet(chordButtonState);
+}
+
 maxApi.addHandler('toggleI', (value) => {
-  updateChordButtonState('I', value);
-  maxApi.post(chordButtonState);
-  // maxApi.outlet(chordButtonState[value]);
+  const toggleName = 'I';
+  updateChord(toggleName, value);
 });
 
 maxApi.addHandler('toggleII', (value) => {
-  updateChordButtonState('II', value);
-  maxApi.post(chordButtonState);
+  const toggleName = 'II';
+  updateChord(toggleName, value);
 });
 
 maxApi.addHandler('toggleIII', (value) => {
-  updateChordButtonState('III', value);
-  maxApi.post(chordButtonState);
+  const toggleName = 'III';
+  updateChord(toggleName, value);
 });
 
 maxApi.addHandler('toggleIV', (value) => {
-  updateChordButtonState('IV', value);
+  const toggleName = 'IV';
+  updateChord(toggleName, value);
 });
 
 maxApi.addHandler('toggleV', (value) => {
-  updateChordButtonState('V', value);
+  const toggleName = 'V';
+  updateChord(toggleName, value);
 });
 
 maxApi.addHandler('toggleVI', (value) => {
-  updateChordButtonState('VI', value);
+  const toggleName = 'VI';
+  updateChord(toggleName, value);
 });
 
 maxApi.addHandler('toggleVII', (value) => {
-  updateChordButtonState('VII', value);
+  const toggleName = 'VII';
+  updateChord(toggleName, value);
 });
 
 maxApi.addHandler('toggleI2', (value) => {
-  updateChordButtonState('I2', value);
+  const toggleName = 'I2';
+  updateChord(toggleName, value);
 });
