@@ -6,6 +6,17 @@ const maxApi = require('max-api');
 // const addOctaves = (chord, octave) => chord.map(item => item + octave);
 // const chordToMidi = (chord) => chord.map((item) => Note.midi(item));
 
+// let chordName;
+// let chordType;
+let pattern;
+// let chordProgression;
+// let measures;
+
+let key = {
+  root: null,
+  scale: null
+}
+
 // const chordMap = {
 //   maj: {
 //     label: 'maj',
@@ -56,61 +67,13 @@ let chordButtonState = {
   }
 }
 
-// // let chordName;
-// // let chordType;
-
-let pattern;
-// let chordProgression;
-
-// let key = {
-//   root,
-//   scale
-// }
-// let measures;
+// CHORD BUTTONS
 
 const getNumberOfChords = (prog) => {
   const progArr = prog.match(/[a-z]/g);
   const uniqueItems = progArr.filter((item, index) => progArr.indexOf(item) === index);
   return uniqueItems.length;
 };
-
-// const generateChord = (root, scale) => {
-//   const chordSuffix = chordMap[scale].suffix;
-//   const formattedChordName = `${root}${chordSuffix}`
-//   const chordNotes = generateChord(formattedChordName);
-//   const chordNotesWithOctave = addOctaves(chordNotes, 3);
-//   const midiChord = chordToMidi(chordNotesWithOctave);
-//   return midiChord;
-// }
-
-// maxApi.addHandler('updateKey', (root, scale) => {
-//   key.root = root;
-//   key.scale = type;
-// });
-
-// // maxApi.addHandler('updateMeasures', (measures) => {
-
-// // });
-
-maxApi.addHandler('updatePattern', (updatedPatt) => {
-  pattern = updatedPatt;
-  clearChordButtonState();
-});
-
-// maxApi.addHandler('updateProgression', (button, value) => {
-//   // chordProgression = [a, b, c, d];
-//   maxApi.post(button, value, 'TEST');
-// });
-
-// maxApi.addHandler('generateChords', () => {
-//   // const chordsToWrite = [];
-//   // chordProgression.forEach((item) => {
-//   //   chordsToWrite.push(...generateChord(item));
-//   // });
-//   // maxApi.post(chordsToWrite[0], 'chordz');
-//   // // maxApi.outlet(chordsToWrite);
-//   maxApi.outlet([50, 54, 57]);
-// });
 
 const clearChordButtonState = () => {
   Object.keys(chordButtonState).forEach((item) => {
@@ -188,3 +151,50 @@ maxApi.addHandler('toggleI2', (value) => {
   const toggleName = 'I2';
   updateChord(toggleName, value);
 });
+
+// PATTERN
+
+maxApi.addHandler('updatePattern', (updatedPatt) => {
+  pattern = updatedPatt;
+  clearChordButtonState();
+});
+
+// MEASURES
+
+// // maxApi.addHandler('updateMeasures', (measures) => {
+// // });
+
+// KEY
+
+maxApi.addHandler('updateKey', (root, scale) => {
+  key.root = root;
+  key.scale = scale;
+});
+
+// CHORD OUTPUT
+
+// const generateChord = (root, scale) => {
+//   const chordSuffix = chordMap[scale].suffix;
+//   const formattedChordName = `${root}${chordSuffix}`
+//   const chordNotes = generateChord(formattedChordName);
+//   const chordNotesWithOctave = addOctaves(chordNotes, 3);
+//   const midiChord = chordToMidi(chordNotesWithOctave);
+//   return midiChord;
+// }
+
+// maxApi.addHandler('generateChords', () => {
+//   // const chordsToWrite = [];
+//   // chordProgression.forEach((item) => {
+//   //   chordsToWrite.push(...generateChord(item));
+//   // });
+//   // maxApi.post(chordsToWrite[0], 'chordz');
+//   // // maxApi.outlet(chordsToWrite);
+//   maxApi.outlet([50, 54, 57]);
+// });
+
+// ?
+
+// maxApi.addHandler('updateProgression', (button, value) => {
+//   // chordProgression = [a, b, c, d];
+//   maxApi.post(button, value, 'TEST');
+// });
