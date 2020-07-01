@@ -1,26 +1,34 @@
 const maxApi = require('max-api');
-// const { Scale, Chord, Note } = require('tonal');
+const { Scale, Chord, Note } = require('tonal');
+const Key = require('tonal-key');
 
 const generateScale = (scale) => Scale.notes(scale);
 const generateChord = (chordName) => Chord.notes(chordName);
 const addOctaves = (chord, octave) => chord.map(item => item + octave);
 const chordToMidi = (chord) => chord.map((item) => Note.midi(item));
+const generateChordsForKey = (root, scale) => { 
+  const chord = `${root} ${chordMap[scale].suffix}`
+  const selChord = getSelectedChords();
+  maxApi.post(selChord, 'SLE');
+  maxApi.post(Key.triads(chord, selChord), 'CHOR');
+  // return Key.chord(chord);
+};
 
 // let chordName;
 // let chordType;
 // let chordProgression;
 // let measures;
 
-// const chordMap = {
-//   maj: {
-//     label: 'maj',
-//     suffix: ''
-//   },
-//   min: {
-//     label: 'min',
-//     suffix: 'm'
-//   }
-// };
+const chordMap = {
+  maj: {
+    label: 'maj',
+    suffix: 'major'
+  },
+  min: {
+    label: 'min',
+    suffix: 'minor'
+  }
+};
 
 let appState = {
   chordButtons: {
@@ -75,6 +83,10 @@ const getNumberOfChords = (prog) => {
   const uniqueItems = progArr.filter((item, index) => progArr.indexOf(item) === index);
   return uniqueItems.length;
 };
+
+const getSelectedChords = () => {
+  return Object.keys(appState.chordButtons).filter((item) => appState.chordButtons[item].on);
+}
 
 const clearChordButtonState = () => {
   Object.keys(appState.chordButtons).forEach((item) => {
@@ -170,6 +182,7 @@ maxApi.addHandler('updatePattern', (updatedPatt) => {
 maxApi.addHandler('updateKey', (root, scale) => {
   appState.key.root = root;
   appState.key.scale = scale;
+  generateChordsForKey(root, scale);
 });
 
 // CHORD OUTPUT
