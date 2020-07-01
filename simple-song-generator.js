@@ -8,14 +8,8 @@ const chordToMidi = (chord) => chord.map((item) => Note.midi(item));
 
 // let chordName;
 // let chordType;
-let pattern;
 // let chordProgression;
 // let measures;
-
-let key = {
-  root: null,
-  scale: null
-}
 
 // const chordMap = {
 //   maj: {
@@ -28,43 +22,50 @@ let key = {
 //   }
 // };
 
-let chordButtonState = {
-  I: {
-    on: false,
-    active: true,
+let appState = {
+  chordButtons: {
+    I: {
+      on: false,
+      active: true,
+    },
+    II: {
+      on: false,
+      active: true,
+    },
+    III: {
+      on: false,
+      active: true,
+    },
+    IV: {
+      on: false,
+      active: true,
+    },
+    V: {
+      on: false,
+      active: true,
+    },
+    VI: {
+      on: false,
+      active: true,
+    },
+    VII: {
+      on: false,
+      active: true,
+    },
+    VIII: {
+      on: false,
+      active: true,
+    },
+    I2: {
+      on: false,
+      active: true,
+    }
   },
-  II: {
-    on: false,
-    active: true,
+  key: {
+    root: null,
+    scale: null
   },
-  III: {
-    on: false,
-    active: true,
-  },
-  IV: {
-    on: false,
-    active: true,
-  },
-  V: {
-    on: false,
-    active: true,
-  },
-  VI: {
-    on: false,
-    active: true,
-  },
-  VII: {
-    on: false,
-    active: true,
-  },
-  VIII: {
-    on: false,
-    active: true,
-  },
-  I2: {
-    on: false,
-    active: true,
-  }
+  pattern: null
 }
 
 // CHORD BUTTONS
@@ -76,26 +77,26 @@ const getNumberOfChords = (prog) => {
 };
 
 const clearChordButtonState = () => {
-  Object.keys(chordButtonState).forEach((item) => {
-    chordButtonState[item] = { on: false, active: true }
+  Object.keys(appState.chordButtons).forEach((item) => {
+    appState.chordButtons[item] = { on: false, active: true }
   });
 }
 
 const activateUnonButtons = (isActive) => {
-  Object.keys(chordButtonState).forEach((item) => {
-    if(!chordButtonState[item].on) {
-      chordButtonState[item] = { ...chordButtonState[item], active: isActive }
+  Object.keys(appState.chordButtons).forEach((item) => {
+    if(!appState.chordButtons[item].on) {
+      appState.chordButtons[item] = { ...appState.chordButtons[item], active: isActive }
     }
   });
 }
 
 const updateChordButtonState = (chord, value) => {
   const booleanValue = value === 0 ? false : true;
-  if (chordButtonState[chord].active){
-    chordButtonState[chord] = { ...chordButtonState[chord], on: booleanValue }
+  if (appState.chordButtons[chord].active){
+    appState.chordButtons[chord] = { ...appState.chordButtons[chord], on: booleanValue }
   }
-  const numberOfChords = pattern ? getNumberOfChords(pattern) : 0;
-  const onItems = Object.values(chordButtonState).filter((item) => {
+  const numberOfChords = appState.pattern ? getNumberOfChords(appState.pattern) : 0;
+  const onItems = Object.values(appState.chordButtons).filter((item) => {
     return item.on;
   }).length;
   const freeSpaces = numberOfChords - onItems;
@@ -108,8 +109,8 @@ const updateChordButtonState = (chord, value) => {
 
 const updateChord = (toggleName, value) => {
   updateChordButtonState(toggleName, value);
-  const state = chordButtonState[toggleName];
-  maxApi.outlet(chordButtonState);
+  const state = appState.chordButtons[toggleName];
+  maxApi.outlet(appState);
 }
 
 maxApi.addHandler('toggleI', (value) => {
@@ -155,7 +156,7 @@ maxApi.addHandler('toggleI2', (value) => {
 // PATTERN
 
 maxApi.addHandler('updatePattern', (updatedPatt) => {
-  pattern = updatedPatt;
+  appState.pattern = updatedPatt;
   clearChordButtonState();
 });
 
@@ -167,8 +168,8 @@ maxApi.addHandler('updatePattern', (updatedPatt) => {
 // KEY
 
 maxApi.addHandler('updateKey', (root, scale) => {
-  key.root = root;
-  key.scale = scale;
+  AppState.key.root = root;
+  AppState.key.scale = scale;
 });
 
 // CHORD OUTPUT
@@ -182,15 +183,15 @@ maxApi.addHandler('updateKey', (root, scale) => {
 //   return midiChord;
 // }
 
-// maxApi.addHandler('generateChords', () => {
-//   // const chordsToWrite = [];
-//   // chordProgression.forEach((item) => {
-//   //   chordsToWrite.push(...generateChord(item));
-//   // });
-//   // maxApi.post(chordsToWrite[0], 'chordz');
-//   maxApi.outlet('foooo');
-//   // maxApi.outlet([50, 54, 57]);
-// });
+maxApi.addHandler('generateChords', () => {
+  // const chordsToWrite = [];
+  // chordProgression.forEach((item) => {
+  //   chordsToWrite.push(...generateChord(item));
+  // });
+  // maxApi.post(chordsToWrite[0], 'chordz');
+  maxApi.outlet(appState);
+  // maxApi.outlet([50, 54, 57]);
+});
 
 // ?
 
