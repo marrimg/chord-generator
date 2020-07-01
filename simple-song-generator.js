@@ -1,10 +1,10 @@
 const maxApi = require('max-api');
 // const { Scale, Chord, Note } = require('tonal');
 
-// const generateScale = (scale) => Scale.notes(scale);
-// const generateChord = (chordName) => Chord.notes(chordName);
-// const addOctaves = (chord, octave) => chord.map(item => item + octave);
-// const chordToMidi = (chord) => chord.map((item) => Note.midi(item));
+const generateScale = (scale) => Scale.notes(scale);
+const generateChord = (chordName) => Chord.notes(chordName);
+const addOctaves = (chord, octave) => chord.map(item => item + octave);
+const chordToMidi = (chord) => chord.map((item) => Note.midi(item));
 
 // let chordName;
 // let chordType;
@@ -173,7 +173,7 @@ maxApi.addHandler('updateKey', (root, scale) => {
 
 // CHORD OUTPUT
 
-// const generateChord = (root, scale) => {
+// const generateMidiChord = (root, scale) => {
 //   const chordSuffix = chordMap[scale].suffix;
 //   const formattedChordName = `${root}${chordSuffix}`
 //   const chordNotes = generateChord(formattedChordName);
@@ -188,8 +188,8 @@ maxApi.addHandler('updateKey', (root, scale) => {
 //   //   chordsToWrite.push(...generateChord(item));
 //   // });
 //   // maxApi.post(chordsToWrite[0], 'chordz');
-//   // // maxApi.outlet(chordsToWrite);
-//   maxApi.outlet([50, 54, 57]);
+//   maxApi.outlet('foooo');
+//   // maxApi.outlet([50, 54, 57]);
 // });
 
 // ?
