@@ -168,8 +168,8 @@ maxApi.addHandler('updatePattern', (updatedPatt) => {
 // KEY
 
 maxApi.addHandler('updateKey', (root, scale) => {
-  AppState.key.root = root;
-  AppState.key.scale = scale;
+  appState.key.root = root;
+  appState.key.scale = scale;
 });
 
 // CHORD OUTPUT
