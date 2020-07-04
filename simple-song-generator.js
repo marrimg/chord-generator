@@ -19,6 +19,13 @@ const lettersToNumberMap = {
   d: 4
 };
 
+const activebgoncolorMap = {
+  1: [0.992, 0.188, 0.188, 1.000],
+  2: [0.992, 0.506, 0.188, 1.000],
+  3: [1.000, 0.710, 0.196, 1.000],
+  4: [0.996, 0.894, 0.000, 1.000]
+}
+
 const chordMap = {
   maj: {
     label: 'maj',
@@ -35,47 +42,56 @@ let appState = {
     I: {
       on: false,
       active: true,
-      positionInPatt: 0
+      positionInPatt: 0,
+      activebgoncolor: null
     },
     II: {
       on: false,
       active: true,
-      positionInPatt: 0
+      positionInPatt: 0,
+      activebgoncolor: null
     },
     III: {
       on: false,
       active: true,
-      positionInPatt: 0
+      positionInPatt: 0,
+      activebgoncolor: null
     },
     IV: {
       on: false,
       active: true,
-      positionInPatt: 0
+      positionInPatt: 0,
+      activebgoncolor: null
     },
     V: {
       on: false,
       active: true,
-      positionInPatt: 0
+      positionInPatt: 0,
+      activebgoncolor: null
     },
     VI: {
       on: false,
       active: true,
-      positionInPatt: 0
+      positionInPatt: 0,
+      activebgoncolor: null
     },
     VII: {
       on: false,
       active: true,
-      positionInPatt: 0
+      positionInPatt: 0,
+      activebgoncolor: null
     },
     VIII: {
       on: false,
       active: true,
-      positionInPatt: 0
+      positionInPatt: 0,
+      activebgoncolor: null
     },
     I2: {
       on: false,
       active: true,
-      positionInPatt: 0
+      positionInPatt: 0,
+      activebgoncolor: null
     }
   },
   key: {
@@ -107,7 +123,7 @@ const getSelectedChords = () => {
 
 const clearChordButtonState = () => {
   Object.keys(appState.chordButtons).forEach((item) => {
-    appState.chordButtons[item] = { on: false, active: true, positionInPatt: 0 }
+    appState.chordButtons[item] = { on: false, active: true, positionInPatt: 0, activebgoncolor: null }
   });
 }
 
@@ -130,12 +146,15 @@ const updatePositionInPattern = (chord, isOn) => {
         const gapToFill = fillGaps.find(item => !existingPositions.includes(item));
         if(gapToFill) {
           appState.chordButtons[chord].positionInPatt = gapToFill;
+          appState.chordButtons[chord].activebgoncolor = activebgoncolorMap[gapToFill];
         } else if (!gapToFill && highestExistingVal < highestValInPatt) {
             appState.chordButtons[chord].positionInPatt = highestExistingVal + 1;
+            appState.chordButtons[chord].activebgoncolor = activebgoncolorMap[highestExistingVal + 1];
         }
       }
   } else {
     appState.chordButtons[chord].positionInPatt = 0;
+    appState.chordButtons[chord].activebgoncolor = null;
   }
 }
 
@@ -266,7 +285,7 @@ maxApi.addHandler('generateChords', () => {
     chordsToWrite.push(generateMidiChord(item));
   });
   appState.midiOutput = chordsToWrite;
-  maxApi.post(appState, 'SLE');
+  maxApi.post(appState.midiOutput, 'SLE');
   maxApi.outlet(appState);
 });
 
