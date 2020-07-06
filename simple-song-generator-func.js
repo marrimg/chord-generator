@@ -12,10 +12,11 @@ function Note(pitch, start, duration){
 function addChord(notes) {
   post(notes[0].pitch);
   obj.call("set_notes");
-  obj.call("notes", notes.length);
-  notes.forEach(function (note) {  
-    obj.call("note", note.pitch, note.start.toFixed(4), note.duration.toFixed(4), note.velocity, note.muted);
-  });
+  obj.call("notes", notes.length); 
+  obj.call("note", notes[0].pitch, notes[0].start.toFixed(4), notes[0].duration.toFixed(4), notes[0].velocity, notes[0].muted);
+  // notes.forEach(function (note) {  
+  //   obj.call("note", note.pitch, note.start.toFixed(4), note.duration.toFixed(4), note.velocity, note.muted);
+  // });
   obj.call("done");
 }
 
