@@ -277,15 +277,18 @@ const generateMidiChord = (chordName) => {
 }
 
 maxApi.addHandler('generateChords', () => {
-  const chordsToWrite = [];
   const root = appState.key.root;
   const scale = appState.key.scale;
   const selectedChords = generateChordsForKey(root, scale);
-  selectedChords.forEach((item) => {
-    chordsToWrite.push(generateMidiChord(item));
-  });
+  const chordsToWrite = selectedChords.reduce((acc, item, index) => {
+    acc[index] = generateMidiChord(item);
+    return acc;
+  }, {});
+  // selectedChords.forEach((item) => {
+  //   chordsToWrite.push(generateMidiChord(item));
+  // });
   appState.midiOutput = chordsToWrite;
-  maxApi.post(appState.midiOutput, 'SLE');
+  // maxApi.post(appState, 'SLE');
   maxApi.outlet(appState);
 });
 

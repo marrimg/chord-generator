@@ -1,3 +1,6 @@
+var path = "live_set tracks 0 clip_slots 0 clip";
+var obj = new LiveAPI(path);
+
 function Note(pitch, start, duration){
   this.pitch = pitch;
   this.start = start;
@@ -7,24 +10,31 @@ function Note(pitch, start, duration){
 }
 
 function addChord(notes) {
-  var path = "live_set tracks 0 clip_slots 0 clip";
-  var obj = new LiveAPI(path);
+  post(notes[0].pitch);
   obj.call("set_notes");
   obj.call("notes", notes.length);
   notes.forEach(function (note) {  
-    // post(note.pitch);
     obj.call("note", note.pitch, note.start.toFixed(4), note.duration.toFixed(4), note.velocity, note.muted);
   });
   obj.call("done");
 }
 
-function setNotes(noteOne, noteTwo, noteThree) {
+function setNotes(data) {
+  var d1 = new Dict("midiOutputVals");
+  var keys = d1.getkeys();
   var notes = [];
-  notes.push(new Note(noteOne, 0, 1));
-  notes.push(new Note(noteTwo, 0, 1));
-  notes.push(new Note(noteThree, 0, 1));
-  // post(notes);
-  addChord(notes);
+  // var name = d1.get(1);
+  // post(keys);
+  if (keys) {
+    keys.forEach(function (key) {
+      const notesFromKey = d1.get(key);
+      notesFromKey && notesFromKey.forEach(function (note, index) {
+        var position = index + 1;
+        notes.push(new Note(note, position, 1));
+      });
+    });
+    addChord(notes);
+  }
 }
 
 // var path = "live_set tracks 0 clip_slots 0 clip";
@@ -44,7 +54,6 @@ function setNotes(noteOne, noteTwo, noteThree) {
 //     obj.call("set_notes");
 //     obj.call("notes", 3);
 //     for (i = 0; i < notes.length; i++){
-//         post('fuck u!');
 //         obj.call("note", notes[i], "1.0", "1.0", 100, 0);
 //     }
 //     // obj.call("note", notes, "1.0", "1.0", 100, 0);
