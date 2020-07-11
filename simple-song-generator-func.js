@@ -20,6 +20,9 @@ function addChord(notes) {
 
 function setNotes() {
   var d1 = new Dict("midiOutputVals");
+  var d2 = new Dict("lengthVal");
+  var length = d2.get("length");
+  post(JSON.stringify(length), 'LENGGGTH');
   var keys = d1.getkeys();
   var notes = [];
   if (keys) {

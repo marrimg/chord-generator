@@ -23,7 +23,7 @@ let appState = {
     scale: 'maj'
   },
   pattern: null,
-  measures: null,
+  measures: 1,
   chords: {
     1: 'I',
     2: 'I',
@@ -77,8 +77,9 @@ maxApi.addHandler('updatePattern', (updatedPatt) => {
 
 // MEASURES
 
-maxApi.addHandler('updateMeasures', (measures) => {
+maxApi.addHandler('updateLength', (measures) => {
   appState.measures = measures;
+  maxApi.setDict('lengthVal', { length: appState.measures });
 });
 
 // KEY
@@ -113,5 +114,6 @@ maxApi.addHandler('generateChords', () => {
   }, {});
   appState.midiOutput = chordsToWrite;
   maxApi.setDict('midiOutputVals', appState.midiOutput);
+  maxApi.outletBang();
 });
 
