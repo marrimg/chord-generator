@@ -204,8 +204,9 @@ maxApi.addHandler('generateChords', () => {
   //   chordsToWrite.push(generateMidiChord(item));
   // });
   appState.midiOutput = chordsToWrite;
-  // maxApi.post(appState.chords, 'SLE');
-  maxApi.outlet(appState.midiOutput);
+  // maxApi.post(appState.midiOutput, 'SLE');
+  maxApi.setDict('midiOutputVals', appState.midiOutput);
+  // maxApi.outlet(appState.midiOutput);
 });
 
 // ?
