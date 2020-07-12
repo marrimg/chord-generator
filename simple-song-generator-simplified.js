@@ -84,17 +84,22 @@ maxApi.addHandler('updateLength', (measures) => {
 
 // KEY
 
-maxApi.addHandler('updateKey', (root, scale) => {
-  appState.key.root = root;
+maxApi.addHandler('updateScale', (scale) => {
   appState.key.scale = scale;
+});
+
+maxApi.addHandler('updateRoot', (root) => {
+  appState.key.root = root;
 });
 
 // CHORD OUTPUT
 
 const generateChordsForKey = (root, scale) => { 
   const chord = `${root} ${chordMap[scale].suffix}`
+  maxApi.post(chord, 'CHORD');
   const selChord = getSelectedChords();
   const chordPatt = Object.values(selChord);
+  maxApi.post(Key.triads(chord, chordPatt));
   return Key.triads(chord, chordPatt);
 };
 

@@ -22,14 +22,15 @@ function setNotes() {
   var d1 = new Dict("midiOutputVals");
   var d2 = new Dict("lengthVal");
   var length = d2.get("length");
-  post(JSON.stringify(length), 'LENGGGTH');
   var keys = d1.getkeys();
   var notes = [];
   if (keys) {
     keys.forEach(function (key, index) {
       const notesFromKey = d1.get(key);
       notesFromKey && notesFromKey.forEach(function (note) {
-        notes.push(new Note(note, index, 1));
+        var start = index * length;
+        var duration = length;
+        notes.push(new Note(note, start, duration));
       });
     });
     addChord(notes);
