@@ -2,9 +2,14 @@ const maxApi = require('max-api');
 const { Chord, Note } = require('tonal');
 const Key = require('tonal-key');
 
+// I'm not sure why, but the chords are being written one octave lower in Live
+const OCTAVE_COMPENSATION = 1;
+const DEFAULT_OCTAVE = 3;
+
 const generateChord = (chordName) => Chord.notes(chordName);
 const addOctaves = (chord, octave) => chord.map(item => item + octave);
 const chordToMidi = (chord) => chord.map((item) => Note.midi(item));
+const increaseOctave = (val) => val + OCTAVE_COMPENSATION;
 
 const chordMap = {
   maj: {
@@ -30,6 +35,12 @@ let appState = {
     3: 'I',
     4: 'I'
   },
+  octaves: {
+    1: increaseOctave(DEFAULT_OCTAVE),
+    2: increaseOctave(DEFAULT_OCTAVE),
+    3: increaseOctave(DEFAULT_OCTAVE),
+    4: increaseOctave(DEFAULT_OCTAVE)
+  },
   midiOutput: null,
 }
 
@@ -45,28 +56,47 @@ const getSelectedChords = () => {
   return chords;
 }
 
-const updateChordState = (chord, value) => {
-  appState.chords[chord] = value;
-}
-
 maxApi.addHandler('set1', (value) => {
   const chord = 1;
-  updateChordState(chord, value);
+  appState.chords[chord] = value;
 });
 
 maxApi.addHandler('set2', (value) => {
   const chord = 2;
-  updateChordState(chord, value);
+  appState.chords[chord] = value;
 });
 
 maxApi.addHandler('set3', (value) => {
   const chord = 3;
-  updateChordState(chord, value);
+  appState.chords[chord] = value;
 });
 
 maxApi.addHandler('set4', (value) => {
   const chord = 4;
-  updateChordState(chord, value);
+  appState.chords[chord] = value;
+});
+
+// OCTAVES
+
+maxApi.addHandler('oct1', (value) => {
+  const octave = 1;
+  appState.octaves[octave] = increaseOctave(value);
+  maxApi.post(appState.octaves[octave], 'VALOCT');
+});
+
+maxApi.addHandler('oct2', (value) => {
+  const octave = 2;
+  appState.octaves[octave] = increaseOctave(value);
+});
+
+maxApi.addHandler('oct3', (value) => {
+  const octave = 3;
+  appState.octaves[octave] = increaseOctave(value);
+});
+
+maxApi.addHandler('oct4', (value) => {
+  const octave = 4;
+  appState.octaves[octave] = increaseOctave(value);
 });
 
 // PATTERN
@@ -96,16 +126,16 @@ maxApi.addHandler('updateRoot', (root) => {
 
 const generateChordsForKey = (root, scale) => { 
   const chord = `${root} ${chordMap[scale].suffix}`
-  maxApi.post(chord, 'CHORD');
   const selChord = getSelectedChords();
   const chordPatt = Object.values(selChord);
   maxApi.post(Key.triads(chord, chordPatt));
   return Key.triads(chord, chordPatt);
 };
 
-const generateMidiChord = (chordName) => {
+const generateMidiChord = (chordName, oct) => {
   const chordNotes = generateChord(chordName);
-  const chordWithOctaves = addOctaves(chordNotes, 3);
+  const chordWithOctaves = addOctaves(chordNotes, oct);
+  maxApi.post(chordWithOctaves, 'CHORDWIT');
   return chordToMidi(chordWithOctaves);
 }
 
@@ -114,7 +144,8 @@ maxApi.addHandler('generateChords', () => {
   const scale = appState.key.scale;
   const selectedChords = generateChordsForKey(root, scale);
   const chordsToWrite = selectedChords.reduce((acc, item, index) => {
-    acc[index] = generateMidiChord(item);
+    const oct = appState.octaves[index + 1]
+    acc[index] = generateMidiChord(item, oct);
     return acc;
   }, {});
   appState.midiOutput = chordsToWrite;
