@@ -227,7 +227,7 @@ maxApi.addHandler('generateChords', () => {
   }, {});
 
   appState.midiOutput = chordsToWrite;
-  
+  maxApi.setDict('chordDisplay', { chords: chordsWithSubs.join(' ') });
   maxApi.setDict('midiOutputVals', appState.midiOutput);
   maxApi.outletBang();
 });
